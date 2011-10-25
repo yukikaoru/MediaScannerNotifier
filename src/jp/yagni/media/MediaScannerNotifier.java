@@ -20,44 +20,14 @@ public class MediaScannerNotifier implements MediaScannerConnectionClient
 {
     private static final String TAG = "MediaScannerNotifier";
     
+    private Context mContext;
     private MediaScannerConnection mConnection;
     private File mFile;
 
     private MediaScannerNotifier(Context context)
     {
+        mContext = context;
         mConnection = new MediaScannerConnection(context, this);
-    }
-    
-    /**
-     * @param context
-     * @param file
-     */
-    public MediaScannerNotifier(Context context, File file)
-    {
-        this(context);
-        
-        mFile = file;
-    }
-    
-    /**
-     * @param context
-     * @param uri
-     */
-    public MediaScannerNotifier(Context context, Uri uri)
-    {
-        this(context);
-        
-        String [] columns = {MediaStore.Images.Media.DATA};
-        Cursor c = context.getContentResolver().query(uri, columns, null, null, null);
-        try {
-            if (c.moveToFirst()) {
-                mFile = new File(c.getString(0));
-            }
-        } finally {
-            if (c != null) {
-                c.close();
-            }
-        }
     }
 
     @Override
@@ -77,5 +47,27 @@ public class MediaScannerNotifier implements MediaScannerConnectionClient
     public void scan()
     {
         mConnection.connect();
+    }
+    
+    public void scan(File file)
+    {
+        mFile = file;
+        scan();
+    }
+    
+    public void scan(Uri uri)
+    {
+        String [] columns = {MediaStore.Images.Media.DATA};
+        Cursor c = mContext.getContentResolver().query(uri, columns, null, null, null);
+        try {
+            if (c.moveToFirst()) {
+                mFile = new File(c.getString(0));
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+        scan();
     }
 }

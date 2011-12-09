@@ -18,13 +18,13 @@ import java.io.File;
  */
 public class MediaScannerNotifier implements MediaScannerConnectionClient
 {
-    private static final String TAG = "MediaScannerNotifier";
+    private final String TAG = getClass().getSimpleName();
     
     private Context mContext;
     private MediaScannerConnection mConnection;
     private File mFile;
 
-    private MediaScannerNotifier(Context context)
+    public MediaScannerNotifier(Context context)
     {
         mContext = context;
         mConnection = new MediaScannerConnection(context, this);

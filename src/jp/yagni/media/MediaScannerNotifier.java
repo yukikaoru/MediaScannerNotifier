@@ -60,14 +60,18 @@ public class MediaScannerNotifier implements MediaScannerConnectionClient
         String [] columns = {MediaStore.Images.Media.DATA};
         Cursor c = mContext.getContentResolver().query(uri, columns, null, null, null);
         try {
-            if (c.moveToFirst()) {
-                mFile = new File(c.getString(0));
+            if (null == c) {
+                Log.e(TAG, "Could not found \"" + uri.toString() + "\"");
+            } else {
+                if (c.moveToFirst()) {
+                    mFile = new File(c.getString(0));
+                    scan();
+                }
             }
         } finally {
-            if (c != null) {
+            if (null != c) {
                 c.close();
             }
         }
-        scan();
     }
 }
